@@ -2,13 +2,7 @@ package com.erp.Ecommeres.homepage.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.erp.Ecommeres.homepage.dto.FeedbackRequestDTO;
 import com.erp.Ecommeres.homepage.entity.CustomerFeedback;
@@ -18,7 +12,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/feedback")
-@CrossOrigin
+@CrossOrigin("*")
 public class CustomerFeedbackController {
 
     private final CustomerFeedbackService service;
@@ -27,17 +21,30 @@ public class CustomerFeedbackController {
         this.service = service;
     }
 
-    // POST feedback (Store rating)
+    // ✅ POST FEEDBACK
     @PostMapping
     public CustomerFeedback submitFeedback(
             @Valid @RequestBody FeedbackRequestDTO dto) {
         return service.saveFeedback(dto);
     }
 
-    // GET feedback for product
+    // ✅ GET FEEDBACK FOR PRODUCT
     @GetMapping("/product/{productId}")
     public List<CustomerFeedback> getFeedback(
             @PathVariable Long productId) {
+        return service.getFeedbackByProduct(productId);
+    }
+
+    // ✅ ADMIN GET ALL FEEDBACK
+    @GetMapping
+    public List<CustomerFeedback> getAllFeedback() {
+        return service.getAllFeedback();
+    }
+
+    // ✅ SEARCH BY PRODUCT ID
+    @GetMapping("/search")
+    public List<CustomerFeedback> searchByProduct(
+            @RequestParam Long productId) {
         return service.getFeedbackByProduct(productId);
     }
 }

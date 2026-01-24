@@ -35,8 +35,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && tokenProvider.validateToken(token)) {
 
             Long userId = tokenProvider.getUserIdFromJWT(token);
-            UserDetails userDetails = userDetailsService.loadUserById(userId);
 
+            // ✅ LOAD USER WITH ROLES
+            UserDetails userDetails =
+                    userDetailsService.loadUserById(userId);
+
+            // ✅ AUTHORITIES MUST CONTAIN ROLE_ADMIN
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -44,7 +48,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                             userDetails.getAuthorities()
                     );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

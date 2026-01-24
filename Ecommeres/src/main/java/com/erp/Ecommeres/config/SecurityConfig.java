@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -27,43 +28,38 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    // ---------------- PASSWORD ENCODER ----------------
+    // ---------- PASSWORD ENCODER ----------
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ---------------- AUTH PROVIDER (IMPORTANT) ----------------
+    // ---------- AUTH PROVIDER ----------
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-
-        DaoAuthenticationProvider authProvider =
-                new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
-    // ---------------- AUTH MANAGER (FIXED) ----------------
+    // ---------- AUTH MANAGER ----------
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http)
             throws Exception {
-
         return http.getSharedObject(
                 org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder.class)
                 .authenticationProvider(authenticationProvider())
                 .build();
     }
 
-    // ---------------- JWT FILTER ----------------
+    // ---------- JWT FILTER ----------
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter();
     }
 
-    // ---------------- SECURITY FILTER CHAIN ----------------
+    // ---------- SECURITY FILTER CHAIN ----------
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -83,7 +79,18 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ ALLOW PREFLIGHT REQUESTS (VERY IMPORTANT)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // ✅ PUBLIC AUTH APIs
                 .requestMatchers("/auth/**").permitAll()
+
+                // ✅ ADMIN PROTECTED APIs
+                .requestMatchers("/products/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // ✅ EVERYTHING ELSE NEEDS AUTH
                 .anyRequest().authenticated()
             );
 

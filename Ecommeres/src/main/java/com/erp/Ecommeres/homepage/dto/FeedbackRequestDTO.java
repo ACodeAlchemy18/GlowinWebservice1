@@ -1,8 +1,6 @@
 package com.erp.Ecommeres.homepage.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 public class FeedbackRequestDTO {
 
@@ -12,13 +10,17 @@ public class FeedbackRequestDTO {
     @NotNull
     private Long productId;
 
+    @NotBlank
+    private String category;
+
     @Min(1)
     @Max(5)
-    private int rating;
+    private Integer rating;
 
     private String comment;
 
-    // ✅ Getter & Setter for userId
+    // ===== GETTERS & SETTERS =====
+
     public Long getUserId() {
         return userId;
     }
@@ -27,7 +29,6 @@ public class FeedbackRequestDTO {
         this.userId = userId;
     }
 
-    // ✅ Getter & Setter for productId
     public Long getProductId() {
         return productId;
     }
@@ -36,16 +37,22 @@ public class FeedbackRequestDTO {
         this.productId = productId;
     }
 
-    // ✅ Getter & Setter for rating
-    public int getRating() {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
-    // ✅ Getter & Setter for comment
     public String getComment() {
         return comment;
     }

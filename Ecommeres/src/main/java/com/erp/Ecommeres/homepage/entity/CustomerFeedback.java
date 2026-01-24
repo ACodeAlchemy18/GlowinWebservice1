@@ -1,6 +1,5 @@
 package com.erp.Ecommeres.homepage.entity;
 
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -12,68 +11,65 @@ public class CustomerFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(nullable = false)
-    private int rating;
+    private String category;
 
-    @Column(columnDefinition = "TEXT")
+    private Integer rating;
+
     private String comment;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-	public Long getId() {
-		return id;
-	}
+    // ===== GETTERS & SETTERS =====
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Long getUserId() {
-		return userId;
-	}
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-	public Long getProductId() {
-		return productId;
-	}
+    public Long getProductId() {
+        return productId;
+    }
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
-	}
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
-	public int getRating() {
-		return rating;
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public void setRating(int rating) {
-		this.rating = rating;
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public Integer getRating() {
+        return rating;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-   
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

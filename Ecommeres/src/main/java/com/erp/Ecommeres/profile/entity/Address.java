@@ -2,29 +2,20 @@ package com.erp.Ecommeres.profile.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.Getter;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "address")
-@Data
-@Getter
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")           // ✅ FIX
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "address_line", columnDefinition = "TEXT") // ✅ FIX
+    @Column(name = "address_line", columnDefinition = "TEXT")
     private String addressLine;
 
     @Column(name = "city")
@@ -36,6 +27,56 @@ public class Address {
     @Column(name = "pincode")
     private String pincode;
 
-    @Column(name = "created_at")         // ✅ FIX
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // ===== GETTERS & SETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getAddressLine() {
+        return addressLine;
+    }
+
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getPincode() {
+        return pincode;
+    }
+
+    public void setPincode(String pincode) {
+        this.pincode = pincode;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

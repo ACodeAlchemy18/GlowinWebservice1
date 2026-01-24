@@ -1,14 +1,12 @@
 package com.erp.Ecommeres.homepage.service;
 
-
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.erp.Ecommeres.homepage.dto.FeedbackRequestDTO;
 import com.erp.Ecommeres.homepage.entity.CustomerFeedback;
 import com.erp.Ecommeres.homepage.repo.CustomerFeedbackRepo;
-
-import java.util.List;
 
 @Service
 public class CustomerFeedbackService {
@@ -19,20 +17,27 @@ public class CustomerFeedbackService {
         this.repository = repository;
     }
 
-    // Save feedback
+    // ✅ SAVE FEEDBACK
     public CustomerFeedback saveFeedback(FeedbackRequestDTO dto) {
 
         CustomerFeedback feedback = new CustomerFeedback();
+
         feedback.setUserId(dto.getUserId());
         feedback.setProductId(dto.getProductId());
+        feedback.setCategory(dto.getCategory());
         feedback.setRating(dto.getRating());
         feedback.setComment(dto.getComment());
 
         return repository.save(feedback);
     }
 
-    // Get feedback by product
+    // ✅ GET BY PRODUCT
     public List<CustomerFeedback> getFeedbackByProduct(Long productId) {
         return repository.findByProductId(productId);
+    }
+
+    // ✅ ADMIN GET ALL
+    public List<CustomerFeedback> getAllFeedback() {
+        return repository.findAll();
     }
 }
