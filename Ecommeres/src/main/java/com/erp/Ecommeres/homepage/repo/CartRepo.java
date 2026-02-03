@@ -1,6 +1,5 @@
 package com.erp.Ecommeres.homepage.repo;
 
-
 import com.erp.Ecommeres.homepage.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +11,7 @@ public interface CartRepo extends JpaRepository<Cart, Long> {
     List<Cart> findByUserId(Long userId);
 
     Optional<Cart> findByUserIdAndProductId(Long userId, Long productId);
+
+    // 🔥 ADD THIS
+    void deleteByUserId(Long userId);
 }

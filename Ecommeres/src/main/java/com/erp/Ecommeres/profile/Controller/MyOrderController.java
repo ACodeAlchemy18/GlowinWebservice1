@@ -1,13 +1,12 @@
 package com.erp.Ecommeres.profile.Controller;
 
-
-
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.erp.Ecommeres.profile.entity.MyOrder;
+import com.erp.Ecommeres.homepage.entity.Order;
+import com.erp.Ecommeres.profile.dto.OrderDTO;
 import com.erp.Ecommeres.profile.service.MyOrderService;
 
 @RestController
@@ -15,19 +14,27 @@ import com.erp.Ecommeres.profile.service.MyOrderService;
 @CrossOrigin
 public class MyOrderController {
 
-    private final MyOrderService myOrderService;
+    private final MyOrderService service;
 
-    public MyOrderController(MyOrderService myOrderService) {
-        this.myOrderService = myOrderService;
+    public MyOrderController(MyOrderService service) {
+        this.service = service;
     }
-
-    @PostMapping
-    public ResponseEntity<MyOrder> placeOrder(@RequestBody MyOrder order) {
-        return ResponseEntity.ok(myOrderService.placeOrder(order));
-    }
-
     @GetMapping("/my/{userId}")
-    public ResponseEntity<List<MyOrder>> myOrders(@PathVariable Long userId) {
-        return ResponseEntity.ok(myOrderService.getMyOrders(userId));
+    public ResponseEntity<List<OrderDTO>> myOrders(
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                service.getMyOrders(userId)
+        );
     }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderDetails(
+            @PathVariable Long orderId) {
+
+        return ResponseEntity.ok(
+                service.getOrderById(orderId)
+        );
+    }
+
 }

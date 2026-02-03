@@ -10,6 +10,7 @@ public class ProfileDTO {
     private String imageUrl;
     private Integer age;
     private String gender;
+    private String mobileNumber;
 	public Long getUserId() {
 		return userId;
 	}
@@ -46,6 +47,14 @@ public class ProfileDTO {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+	
+	public String getMobileNumber() {
+	    return mobileNumber;
+	}
+
 
     // getters & setters
 }

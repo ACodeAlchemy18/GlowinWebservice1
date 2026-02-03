@@ -21,38 +21,38 @@ public class AddressService {
         this.userRepo = userRepo;
     }
 
+    // SAVE
     public AddressResponseDTO saveAndFetchAddress(Long userId, Address address) {
 
-        // save address
         address.setUserId(userId);
-        Address savedAddress = addressRepo.save(address);
+        Address saved = addressRepo.save(address);
 
-        // fetch user
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // build response
         AddressResponseDTO dto = new AddressResponseDTO();
         dto.setFullName(user.getFullName());
         dto.setMobileNumber(user.getMobileNumber());
 
-        dto.setAddressLine(savedAddress.getAddressLine());
-        dto.setCity(savedAddress.getCity());
-        dto.setState(savedAddress.getState());
-        dto.setPincode(savedAddress.getPincode());
+        dto.setAddressLine(saved.getAddressLine());
+        dto.setCity(saved.getCity());
+        dto.setState(saved.getState());
+        dto.setPincode(saved.getPincode());
 
         return dto;
     }
-    
- // GET USER ADDRESSES
+
+    // GET
     public List<Address> getAddresses(Long userId) {
         return addressRepo.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
-    // DELETE ADDRESS
+    // DELETE
     public void deleteAddress(Long id) {
         addressRepo.deleteById(id);
     }
+
+    // UPDATE
     public AddressResponseDTO updateAddress(Long id, Address updated) {
 
         Address existing = addressRepo.findById(id)
@@ -62,11 +62,21 @@ public class AddressService {
         existing.setCity(updated.getCity());
         existing.setState(updated.getState());
         existing.setPincode(updated.getPincode());
-       
 
-        addressRepo.save(existing);
+        Address saved = addressRepo.save(existing);
 
-        return new AddressResponseDTO();
+        User user = userRepo.findById(existing.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        AddressResponseDTO dto = new AddressResponseDTO();
+        dto.setFullName(user.getFullName());
+        dto.setMobileNumber(user.getMobileNumber());
+
+        dto.setAddressLine(saved.getAddressLine());
+        dto.setCity(saved.getCity());
+        dto.setState(saved.getState());
+        dto.setPincode(saved.getPincode());
+
+        return dto;
     }
-
 }

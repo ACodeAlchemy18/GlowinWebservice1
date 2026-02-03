@@ -20,14 +20,15 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
 
     // 🔍 SEARCH ORDERS (safe for Long fields)
     @Query("""
-        SELECT o FROM Order o
-        WHERE 
-           CAST(o.id AS string) LIKE %:keyword%
-        OR CAST(o.userId AS string) LIKE %:keyword%
-        OR LOWER(o.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        OR CAST(o.productId AS string) LIKE %:keyword%
-    """)
-    List<Order> searchOrders(@Param("keyword") String keyword);
+    		SELECT o FROM Order o
+    		WHERE 
+    		   STR(o.id) LIKE %:keyword%
+    		OR STR(o.userId) LIKE %:keyword%
+    		OR LOWER(o.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    		OR STR(o.productId) LIKE %:keyword%
+    		""")
+    		List<Order> searchOrders(@Param("keyword") String keyword);
+
 
     // 🔍 SEARCH PAYMENTS
     @Query("""

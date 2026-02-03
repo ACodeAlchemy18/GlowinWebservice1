@@ -11,5 +11,6 @@ import com.erp.Ecommeres.profile.entity.Profile;
 public interface ProfileRepo extends JpaRepository<Profile, Long> {
 
     Optional<Profile> findByUserId(Long userId);
+    
 
 }

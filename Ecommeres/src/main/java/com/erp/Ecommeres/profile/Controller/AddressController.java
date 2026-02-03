@@ -3,17 +3,7 @@ package com.erp.Ecommeres.profile.Controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.erp.Ecommeres.profile.dto.AddressResponseDTO;
 import com.erp.Ecommeres.profile.entity.Address;
@@ -30,6 +20,7 @@ public class AddressController {
         this.addressService = addressService;
     }
 
+    // SAVE
     @PostMapping("/add")
     public AddressResponseDTO saveAddress(
             @RequestHeader("userId") Long userId,
@@ -37,18 +28,21 @@ public class AddressController {
 
         return addressService.saveAndFetchAddress(userId, address);
     }
-    // GET USER ADDRESSES
+
+    // GET
     @GetMapping("/{userId}")
     public ResponseEntity<List<Address>> getAddresses(@PathVariable Long userId) {
         return ResponseEntity.ok(addressService.getAddresses(userId));
     }
 
-    // DELETE ADDRESS
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteAddress(@PathVariable Long id) {
         addressService.deleteAddress(id);
         return ResponseEntity.ok("Address deleted successfully");
     }
+
+    // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<AddressResponseDTO> updateAddress(
             @PathVariable Long id,
@@ -56,5 +50,4 @@ public class AddressController {
 
         return ResponseEntity.ok(addressService.updateAddress(id, address));
     }
-
 }

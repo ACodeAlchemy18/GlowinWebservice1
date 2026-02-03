@@ -11,7 +11,7 @@ public class FeedbackRequestDTO {
     private Long productId;
 
     @NotBlank
-    private String category;
+    private String category;   // ✅ ADDED
 
     @Min(1)
     @Max(5)

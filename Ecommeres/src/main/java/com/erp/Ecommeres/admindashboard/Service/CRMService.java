@@ -29,10 +29,11 @@ public class CRMService {
         this.profileRepo = profileRepo;
     }
 
-    // ✅ ONLY USERS (CUSTOMERS)
+    // ================= ALL CUSTOMERS =================
     public List<CRMDTO> getAllCustomers() {
 
-        List<User> users = userRepo.findByRole("USER");
+        List<User> users = userRepo.findByRole("USER"); // ✅ only users
+
         List<CRMDTO> list = new ArrayList<>();
 
         for (User user : users) {
@@ -54,8 +55,13 @@ public class CRMService {
                     addressOpt.map(Address::getCity).orElse(null)
             );
 
-            dto.setGender(profileOpt.map(Profile::getGender).orElse(null));
-            dto.setAge(profileOpt.map(Profile::getAge).orElse(null));
+            dto.setGender(
+                    profileOpt.map(Profile::getGender).orElse(null)
+            );
+
+            dto.setAge(
+                    profileOpt.map(Profile::getAge).orElse(null)
+            );
 
             list.add(dto);
         }
@@ -63,14 +69,15 @@ public class CRMService {
         return list;
     }
 
-    // ✅ SEARCH ONLY USERS
+
+    // ================= SEARCH =================
     public List<CRMDTO> searchCustomers(String keyword) {
 
         List<User> users =
-            userRepo.findByRoleAndFullNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
-                "USER", keyword,
-                "USER", keyword
-            );
+                userRepo.findByRoleAndFullNameContainingIgnoreCaseOrRoleAndEmailContainingIgnoreCase(
+                        "USER", keyword,
+                        "USER", keyword
+                );
 
         List<CRMDTO> list = new ArrayList<>();
 
@@ -82,7 +89,6 @@ public class CRMService {
             Optional<Profile> profileOpt =
                     profileRepo.findByUserId(user.getId());
 
-
             CRMDTO dto = new CRMDTO();
             dto.setId(user.getId());
             dto.setUserId(user.getId());
@@ -91,15 +97,21 @@ public class CRMService {
             dto.setMobile(user.getMobileNumber());
 
             dto.setAddress(
-                addressOpt.map(Address::getCity).orElse(null)
+                    addressOpt.map(Address::getCity).orElse(null)
             );
 
-            dto.setGender(profileOpt.map(Profile::getGender).orElse(null));
-            dto.setAge(profileOpt.map(Profile::getAge).orElse(null));
+            dto.setGender(
+                    profileOpt.map(Profile::getGender).orElse(null)
+            );
+
+            dto.setAge(
+                    profileOpt.map(Profile::getAge).orElse(null)
+            );
 
             list.add(dto);
         }
 
         return list;
     }
+
 }

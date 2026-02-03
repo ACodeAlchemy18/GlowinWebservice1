@@ -43,20 +43,35 @@ public class OrderController {
             return ResponseEntity.badRequest().body("Invalid COD request");
         }
 
-        // ✅ FETCH LATEST ADDRESS BY USER
+        // ✅ FETCH LATEST ADDRESS
         Address address = addressRepo
                 .findTopByUserIdOrderByCreatedAtDesc(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Address not found"));
 
+        // ✅ FETCH PRODUCT
         Product product = productRepo.findById(dto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // ❗ CHECK STOCK
+        if (product.getQuantity() < dto.getQuantity()) {
+            return ResponseEntity.badRequest()
+                    .body("Insufficient stock for " + product.getProductName());
+        }
+
+        // 🔥 REDUCE INVENTORY
+        product.setQuantity(
+                product.getQuantity() - dto.getQuantity());
+
+        productRepo.save(product);
+
+        // 📦 BUILD FULL ADDRESS
         String fullAddress =
                 address.getAddressLine() + ", " +
                 address.getCity() + ", " +
                 address.getState() + " - " +
                 address.getPincode();
 
+        // ✅ CREATE ORDER
         Order order = new Order();
 
         order.setUserId(dto.getUserId());
@@ -83,9 +98,10 @@ public class OrderController {
     }
 
     @GetMapping("/search")
-    public List<Order> searchOrders(@RequestParam String keyword) {
+    public List<Order> searchOrders(@RequestParam("query") String keyword) {
         return orderRepo.searchOrders(keyword);
     }
+
     
     @PutMapping("/{orderId}")
     public Order updateShippingDetails(

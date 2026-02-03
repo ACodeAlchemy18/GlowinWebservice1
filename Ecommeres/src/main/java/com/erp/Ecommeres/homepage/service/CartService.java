@@ -25,35 +25,41 @@ public class CartService {
     private final ProductRepo productRepo;
     private final WishlistRepo wishlistRepo;
 
-    private static final double GST_RATE = 0.05; // 5% GST
+    private static final double GST_RATE = 0.05;
 
-    public CartService(CartRepo cartRepo,
-                       ProductRepo productRepo,
-                       WishlistRepo wishlistRepo) {
+    public CartService(
+            CartRepo cartRepo,
+            ProductRepo productRepo,
+            WishlistRepo wishlistRepo) {
+
         this.cartRepo = cartRepo;
         this.productRepo = productRepo;
         this.wishlistRepo = wishlistRepo;
     }
 
-    // ================= ADD TO CART =================
+    // ================= ADD TO CART (SINGLE PRODUCT ONLY) =================
+    @Transactional
     public CartResponseDTO addToCart(Long userId, Long productId) {
 
         Product product = productRepo.findById(productId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Product not found"));
 
-        Cart cart = cartRepo.findByUserIdAndProductId(userId, productId)
-                .orElse(new Cart());
+        // 🔥 REMOVE ALL OLD CART ITEMS FIRST
+        cartRepo.deleteByUserId(userId);
 
+        // ➕ CREATE NEW CART ROW
+        Cart cart = new Cart();
         cart.setUserId(userId);
         cart.setProductId(productId);
         cart.setPrice(product.getPrice());
-
-        int qty = cart.getQuantity() == null ? 1 : cart.getQuantity() + 1;
-        cart.setQuantity(qty);
-        cart.setTotalPrice(qty * product.getPrice());
+        cart.setQuantity(1);
+        cart.setTotalPrice(product.getPrice());
 
         cartRepo.save(cart);
+
         return buildCartResponse(userId);
     }
 
@@ -67,10 +73,14 @@ public class CartService {
 
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found"));
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Cart item not found"));
 
         if (!Objects.equals(cart.getUserId(), userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized");
         }
 
         if (quantity <= 0) {
@@ -80,6 +90,7 @@ public class CartService {
 
         cart.setQuantity(quantity);
         cart.setTotalPrice(quantity * cart.getPrice());
+
         cartRepo.save(cart);
 
         return buildCartResponse(userId);
@@ -90,13 +101,18 @@ public class CartService {
 
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found"));
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Cart item not found"));
 
         if (!Objects.equals(cart.getUserId(), userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized");
         }
 
         cartRepo.deleteById(cartId);
+
         return buildCartResponse(userId);
     }
 
@@ -106,10 +122,14 @@ public class CartService {
 
         Cart cart = cartRepo.findById(cartId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart item not found"));
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Cart item not found"));
 
         if (!Objects.equals(cart.getUserId(), userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized");
         }
 
         Long productId = cart.getProductId();
@@ -118,7 +138,9 @@ public class CartService {
 
             Product product = productRepo.findById(productId)
                     .orElseThrow(() ->
-                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                            new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "Product not found"));
 
             Wishlist wishlist = new Wishlist();
             wishlist.setUserId(userId);
@@ -137,9 +159,12 @@ public class CartService {
         List<Cart> carts = cartRepo.findByUserId(userId);
 
         List<CartDTO> items = carts.stream().map(cart -> {
+
             Product product = productRepo.findById(cart.getProductId())
                     .orElseThrow(() ->
-                            new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                            new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "Product not found"));
 
             CartDTO dto = new CartDTO();
             dto.setId(cart.getId());
@@ -149,7 +174,9 @@ public class CartService {
             dto.setQuantity(cart.getQuantity());
             dto.setPrice(cart.getPrice());
             dto.setTotalPrice(cart.getTotalPrice());
+
             return dto;
+
         }).collect(Collectors.toList());
 
         double subTotal = items.stream()
@@ -157,6 +184,7 @@ public class CartService {
                 .sum();
 
         double gst = subTotal * GST_RATE;
+
         double grandTotal = subTotal + gst;
 
         CartResponseDTO response = new CartResponseDTO();
