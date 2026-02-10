@@ -16,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // ✅ EXACT frontend origin (NO wildcard)
-        config.setAllowedOrigins(List.of("http://localhost:5174","http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5174","http://localhost:5173","https://glowinwebapp12.vercel.app"));
 
         // ✅ Allow headers you actually use
         config.setAllowedHeaders(List.of(
