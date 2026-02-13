@@ -1,27 +1,15 @@
 package com.erp.Ecommeres.admindashboard.controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.erp.Ecommeres.admindashboard.Service.ProductService;
 import com.erp.Ecommeres.admindashboard.dto.ProductDTO;
 
@@ -31,9 +19,11 @@ import com.erp.Ecommeres.admindashboard.dto.ProductDTO;
 public class ProductController {
 
     private final ProductService productService;
+    private final Cloudinary cloudinary;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, Cloudinary cloudinary) {
         this.productService = productService;
+        this.cloudinary = cloudinary;
     }
 
     @PostMapping("/add")
@@ -70,25 +60,23 @@ public class ProductController {
     public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
-    
+
+    // ✅ CLOUDINARY UPLOAD
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file) throws Exception {
 
-        Files.createDirectories(Paths.get("uploads"));
+        Map uploadResult = cloudinary.uploader().upload(
+            file.getBytes(),
+            ObjectUtils.asMap(
+                "folder", "products",
+                "resource_type", "image"
+            )
+        );
 
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-        Path path = Paths.get("uploads").resolve(filename);
-
-        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-        String imageUrl = "http://localhost:8080/uploads/" + filename;
+        String imageUrl = uploadResult.get("secure_url").toString();
 
         return ResponseEntity.ok(Map.of(
             "imageUrl", imageUrl
         ));
     }
-
-
-    
 }
