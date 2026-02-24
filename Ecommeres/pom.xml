@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.erp</groupId>
-	<artifactId>Erp_Retail</artifactId>
+	<artifactId>Ecommeres</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>HirePilot</name>
+	<name>Ecommeres</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -87,11 +87,16 @@
 </dependency>
 
 <dependency>
-<groupId>com.cloudinary</groupId>
-<artifactId>cloudinary-http44</artifactId>
-<version>1.37.0</version>
+  <groupId>com.cloudinary</groupId>
+  <artifactId>cloudinary-http44</artifactId>
+  <version>1.37.0</version>
+  <exclusions>
+    <exclusion>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </exclusion>
+  </exclusions>
 </dependency>
-
         <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

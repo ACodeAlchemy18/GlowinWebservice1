@@ -1,5 +1,7 @@
 package com.erp.Ecommeres.admindashboard.dto;
 
+import java.time.LocalDateTime;
+
 public class ProductDTO {
 
     private Long id;
@@ -11,7 +13,7 @@ public class ProductDTO {
     private String usage;
     private String details;
     private Integer quantity;
-
+    private LocalDateTime createdAt;
     // ===== GETTERS & SETTERS =====
 
     public Long getId() {
@@ -85,4 +87,14 @@ public class ProductDTO {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	
 }

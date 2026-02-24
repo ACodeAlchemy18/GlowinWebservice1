@@ -68,6 +68,7 @@ public class ProductService {
         product.setUsage(dto.getUsage());
         product.setDetails(dto.getDetails());
         product.setQuantity(dto.getQuantity());
+        dto.setCreatedAt(product.getCreatedAt());
 
         return entityToDto(productRepository.save(product));
     }
@@ -88,6 +89,7 @@ public class ProductService {
         product.setUsage(dto.getUsage());
         product.setDetails(dto.getDetails());
         product.setQuantity(dto.getQuantity());
+        dto.setCreatedAt(product.getCreatedAt());
         return product;
     }
 
@@ -103,6 +105,7 @@ public class ProductService {
         dto.setUsage(product.getUsage());
         dto.setDetails(product.getDetails());
         dto.setQuantity(product.getQuantity());
+        dto.setCreatedAt(product.getCreatedAt());
         return dto;
     }
 }
