@@ -23,6 +23,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    // ✅ SKIP JWT FILTER FOR PUBLIC ROUTES
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/auth/");
+    }
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -36,11 +43,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             Long userId = tokenProvider.getUserIdFromJWT(token);
 
-            // ✅ LOAD USER WITH ROLES
             UserDetails userDetails =
                     userDetailsService.loadUserById(userId);
 
-            // ✅ AUTHORITIES MUST CONTAIN ROLE_ADMIN
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             userDetails,

@@ -13,28 +13,31 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
+
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ EXACT frontend origin (NO wildcard)
-        config.setAllowedOrigins(List.of("http://localhost:5174","http://localhost:5173","https://glowinwebapp12.vercel.app","https://glowinwebapp14.vercel.app"));
-
-        // ✅ Allow headers you actually use
-        config.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type",
-                "userId"
+        // ✅ Allowed frontend origins
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "https://glowinwebapp12.vercel.app",
+                "https://glowinwebapp14.vercel.app"
         ));
+
+        // ✅ Allow all headers (simpler + safer)
+        config.setAllowedHeaders(List.of("*"));
 
         // ✅ Allow methods
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS"
         ));
 
-        // ✅ Required for JWT / Authorization
-        config.setAllowCredentials(true);
+        // ✅ JWT BASED AUTH → MUST BE FALSE
+        config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);

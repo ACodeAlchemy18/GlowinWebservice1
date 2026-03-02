@@ -21,8 +21,8 @@ public class EmailService {
         message.setSubject(mailBody.getSubject());
         message.setText(mailBody.getText());
 
-        message.setFrom("sujatadhere24@gmail.com");
-
+        // ✅ MUST MATCH BREVO VERIFIED SENDER
+        message.setFrom("supriyakale1203@gmail.com");
         mailSender.send(message);
     }
 }

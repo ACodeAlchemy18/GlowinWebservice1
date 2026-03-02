@@ -22,9 +22,9 @@ import com.erp.Ecommeres.security.TokenAuthenticationFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final  CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    public SecurityConfig( CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
@@ -64,46 +64,55 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+            // ✅ Enable CORS (CorsConfig handles it)
             .cors(cors -> {})
+
+            // ✅ Disable CSRF for REST APIs
             .csrf(csrf -> csrf.disable())
 
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(
-                    (req, res, e) ->
-                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-                )
-            )
-
+            // ✅ Stateless session (JWT)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
+            // ✅ Authorization rules
             .authorizeHttpRequests(auth -> auth
 
-                // ✅ ALLOW PREFLIGHT REQUESTS (VERY IMPORTANT)
+                // ✅ Preflight requests MUST be allowed
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // ✅ PUBLIC AUTH APIs
+                // ✅ Public auth APIs
                 .requestMatchers("/auth/**").permitAll()
-                
+
+                // ✅ Public uploads (images)
                 .requestMatchers("/uploads/**").permitAll()
 
-
-             // ✅ PUBLIC PRODUCT VIEWING (HOME PAGE)
+                // ✅ Public product viewing
                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
-                // ✅ ADMIN ONLY PRODUCT MANAGEMENT
+                // ✅ Admin-only product management
                 .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
 
-                // ✅ ADMIN DASHBOARD APIs
+                // ✅ Admin APIs
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                // ✅ EVERYTHING ELSE NEEDS AUTH
+                // ✅ Everything else requires authentication
                 .anyRequest().authenticated()
+            )
+
+            // ❌ DO NOT block public APIs with aggressive 401
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(
+                    (req, res, e) -> {
+                        // Let CORS responses pass correctly
+                        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    }
+                )
             );
 
+        // ✅ JWT filter AFTER CORS
         http.addFilterBefore(
                 tokenAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter.class
